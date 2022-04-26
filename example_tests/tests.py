@@ -128,7 +128,7 @@ class testManager(testRunner):
 
     def getTestInfo(self):
         return {
-            'name': 'User Defined Python Test Program',
+            'name': 'Example User Defined Python Test Program',
             'version': '1.0.0'
         }
     
