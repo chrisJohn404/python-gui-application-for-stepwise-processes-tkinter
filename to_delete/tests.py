@@ -12,38 +12,6 @@ import threading
 import time
 from string import Template
 
-# Determine if running as app or python process.
-isExecAsPyProc = True
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    isExecAsPyProc = False
-testsFilePath = path.split(path.abspath(__file__))[0]
-
-testLibsDir = ''
-if isExecAsPyProc:
-    testLibsDir = path.join(os.getcwd(), 'tp_core')
-else:
-    testLibsDir = path.split(sys.executable)[0]
-
-def importfile(file_path, class_name):
-    spec = importlib.util.spec_from_file_location(class_name, file_path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[class_name] = module
-    m = spec.loader.exec_module(module)
-    return module
-
-print(f'testLibsdir: {testLibsDir}')
-print(f'isExecAsPyProc: {isExecAsPyProc}')
-print(f'cwd: {os.getcwd()}')
-print(f'testsFilePath: {testsFilePath}')
-print(f'sys.path: {sys.path}')
-
-sys.path.insert(0, testsFilePath)
-sys.path.insert(0, testLibsDir)
-
-# test = importfile(path.join(testLibsDir,'test.py'),'test').test
-# testRunner = importfile(path.join(testLibsDir,'test_runner.py'),'testRunner').testRunner
-
-# sys.path.insert(0,testLibsDir)
 from test import test
 from test_runner import testRunner
 

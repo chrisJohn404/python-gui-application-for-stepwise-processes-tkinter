@@ -17,6 +17,31 @@ from test_runner import testRunner
 
 DEBUG_ENABLED = False
 
+print(f'importer: {importlib.abc}')
+print(f'cwd: {os.getcwd()}')
+# print(f'Template: {__builtins__}') #LONG
+print(f'dir: {dir()}')
+print(f'loader: {__loader__}')
+print(f'package: {__package__}')
+print(f'name: {__name__}')
+# print(f'path: {__path__}')
+print(f'spec: {__spec__}')
+print(f'specN: {__spec__.loader}')
+print(f'cached: {__cached__}')
+print(f'file: {__file__}')
+
+# NOTE: Code to get the path to the importer file.
+print('')
+import inspect
+# print(f'Stack:{inspect.stack()}')
+print('')
+if __name__ != '__main__':
+    for frame in inspect.stack()[1:]:
+        # print(f'FN: {frame.filename}')
+        if frame.filename[0] != '<':
+            # print(frame.filename)
+            print(f'Ts-Importer: {path.abspath(frame.filename)}')
+            break
 
 '''
 This is a step that will always pass illustrating returning messages to the user.
@@ -93,24 +118,6 @@ pressed before the application can continue.
 '''
 class stepD(test):
     def test(self, testRunner):
-        self.update(1, 'Notifying test-runner to do something.')
-        testRunner.displayMessage('Title... (My Title)', 'Message... (My Message).', self.stepTwo)
-
-    def stepTwo(self, testRunner):
-        time.sleep(0.5)
-        self.message = "Step D Message"
-        self.isComplete = True
-
-    def __init__(self, name, haltIfErr = False):
-        test.__init__(self, name, haltIfErr)
-
-'''
-This test demonstrates how to prompt a tester to do something
-during a test and providing an "Ok" button that has to be 
-pressed before the application can continue.
-'''
-class stepE(test):
-    def test(self, testRunner):
         self.message = f"Step E Message: {testRunner.global_variable}"
         self.isComplete = True
 
@@ -128,7 +135,7 @@ class testManager(testRunner):
 
     def getTestInfo(self):
         return {
-            'name': 'User Defined Python Test Program',
+            'name': f'User Defined Python Test Program: \"{path.basename(__file__)}\"',
             'version': '1.0.0'
         }
     
@@ -153,8 +160,7 @@ class testManager(testRunner):
             stepA('Step A Title', haltIfErr=True),
             stepB('Step B Title'),
             stepC('Step C Title'),
-            stepD('Step D Title'),
-            stepE('Step E Title')
+            stepD('Step D Title')
         ]
 
         testRunner.global_variable = 0

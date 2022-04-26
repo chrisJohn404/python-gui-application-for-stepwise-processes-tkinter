@@ -49,16 +49,17 @@ def runApp(isGui, tests=''):
 
 		fDir = splitPath[0]
 		fName = splitPath[1]
+
 		# Add current file's directory to import path.
 		sys.path.insert(0, fDir)
 
 		if isExecAsPyProc:
 			# Add current file's directory + 'tp_core' to import path.
-			sys.path.insert(0, path.join(path.split(path.abspath(__file__))[0],'tp_core'))
+			sys.path.insert(0, path.join(path.dirname(path.abspath(__file__)),'tp_core'))
 		else:
 			# Add executable file's directory to import path.
 			sys.path.insert(0, path.split(sys.executable)[0])
-		
+
 		testManager = importfile(path.join(fDir,fName), 'testManager').testManager
 		
 		initializedTestManager = testManager()
@@ -75,7 +76,7 @@ def runApp(isGui, tests=''):
 if __name__ == "__main__":
 	execApp = True
 	execGui = True
-	localTestLibs = False
+	# localTestLibs = False # Conditionally allow user script to import files, was exposed w/ "-l"
 	tests = ''
 	if len(sys.argv) > 1:
 		for i, arg in enumerate(sys.argv):
