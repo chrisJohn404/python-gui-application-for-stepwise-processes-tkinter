@@ -6,15 +6,28 @@ cd ..
 SET prev_dir=%cd%
 cd %cur_dir%
 
+rm -r %cur_dir%\dist
+
 REM Specify the absolute path Python executable.
 SET python_exe=C:\Python37\python.exe
 SET python_exe=C:\Users\chris\AppData\Local\Programs\Python\Python37-32\python.exe
+SET python_exe=C:\Python310\python.exe
 
-%python_exe% -m PyInstaller --clean --onefile --nowindow -w -i example_python_test_program.ico --version-file version.txt -n example_python_test_program.exe main.py
+SET ICO_F=example_python_test_program.ico
+SET V_FILE=version.txt
+SET O_NAME=example_python_test_program.exe
+SET MAIN_P=main.py
 
-rem PAUSE
+REM Specify a "-w" flag to start application in enew context/remove the console window.
+REM Docs: https://pyinstaller.org/en/stable/usage.html#cmdoption-c
+%python_exe% -m PyInstaller --clean --onefile --windowed -i %ICO_F% --version-file %V_FILE% -n %O_NAME% %MAIN_P%
+
+cp %cur_dir%\tp_core\test.py %cur_dir%\dist\test.py
+cp %cur_dir%\tp_core\test_runner.py %cur_dir%\dist\test_runner.py
+
+REM Clean up generated .spec file
+rm %cur_dir%\%O_NAME%.spec
 
 rem Run Test Program
-rem .\dist\main.exe
-.\dist\example_python_test_program.exe
+.\dist\%O_NAME%
 
