@@ -1,4 +1,18 @@
 
+print('')
+print('test.py stack:')
+import inspect
+import os
+from os import path
+# print(f'TStack:{inspect.stack()}')
+print('')
+if __name__ != '__main__':
+    for frame in inspect.stack()[1:]:
+        # print(f'T-FN: {frame.filename}')
+        if frame.filename[0] != '<':
+            print(f'T-Importer: {path.abspath(frame.filename)}')
+            break
+
 
 
 class test():
