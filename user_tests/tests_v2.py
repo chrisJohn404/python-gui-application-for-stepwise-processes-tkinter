@@ -1,17 +1,43 @@
 '''
-ESP32 Test Program
+Defined Tests
 Author(s): Chris Johnson
 September 2019
-
-
 '''
+import sys
+import os
+from os import path
+import importlib.util
 
 import threading
 import time
 from string import Template
 
-from tp_core.test import test
-from tp_core.test_runner import testRunner
+# Determine if running as app or python process.
+isExecAsPyProc = True
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    isExecAsPyProc = False
+testsFilePath = path.split(path.abspath(__file__))[0]
+
+testLibsDir = ''
+if isExecAsPyProc:
+    testLibsDir = path.join(os.getcwd(), 'tp_core')
+else:
+    testLibsDir = path.split(sys.executable)[0]
+
+def importfile(file_path, class_name):
+    spec = importlib.util.spec_from_file_location(class_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[class_name] = module
+    m = spec.loader.exec_module(module)
+    return module
+
+print(f'testLibsdir: {testLibsDir}, isExecAsPyProc: {isExecAsPyProc}')
+test = importfile(path.join(testLibsDir,'test.py'),'test').test
+testRunner = importfile(path.join(testLibsDir,'test_runner.py'),'testRunner').testRunner
+
+# sys.path.insert(0,testLibsDir)
+# from test import test
+# from test_runner import testRunner
 
 DEBUG_ENABLED = False
 
@@ -126,8 +152,8 @@ class testManager(testRunner):
 
     def getTestInfo(self):
         return {
-            'name': 'Example Python Test Program',
-            'version': '1.0.0'
+            'name': 'Tests V2 Test Program',
+            'version': '2.0.0'
         }
     
     def getTestingInstructions(self):
@@ -148,11 +174,11 @@ class testManager(testRunner):
     def __init__(self):
 
         tests = [
-            stepA('Step A Title', haltIfErr=True),
-            stepB('Step B Title'),
-            stepC('Step C Title'),
-            stepD('Step D Title'),
-            stepE('Step E Title')
+            stepA('V2 Step A Title', haltIfErr=True),
+            stepB('V2 Step B Title'),
+            stepC('V2 Step C Title'),
+            stepD('V2 Step D Title'),
+            stepE('V2 Step E Title')
         ]
 
         testRunner.global_variable = 0
