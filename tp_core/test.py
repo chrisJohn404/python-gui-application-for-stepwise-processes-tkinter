@@ -1,21 +1,13 @@
-
-print('')
-print('test.py stack:')
-import inspect
-import os
-from os import path
-# print(f'TStack:{inspect.stack()}')
-print('')
-if __name__ != '__main__':
-    for frame in inspect.stack()[1:]:
-        # print(f'T-FN: {frame.filename}')
-        if frame.filename[0] != '<':
-            print(f'T-Importer: {path.abspath(frame.filename)}')
-            break
+'''
+Step  (Implements "Test")
+Author(s): Chris Johnson
+Circa 2020
+ - Implements the "Test" class which any implementor should extend as a ~step~
+   of their defined process.
+'''
 
 
-
-class test():
+class Test():
     # This is a default test function that serves as a
     # very basic example for what a test should look like.
     # THIS FUNCTION SHOULD BE RE-DEFINED BY USER
@@ -74,5 +66,5 @@ class test():
         self.duration = 0
 
 
-
+''' Author(s): Chris Johnson (chrisjohn404) Circa 2020'''
 

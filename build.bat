@@ -31,3 +31,5 @@ rm %cur_dir%\%O_NAME%.spec
 rem Run Test Program
 .\dist\%O_NAME%
 
+
+REM ''' Author(s): Chris Johnson (chrisjohn404) Circa 2020'''

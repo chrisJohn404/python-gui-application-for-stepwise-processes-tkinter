@@ -21,3 +21,6 @@ $python_exe -m PyInstaller --clean --onefile --nowindow -w -i $ico_file --versio
 
 cp $cur_dir/tp_core/test.py $cur_dir/dist/test.py
 cp $cur_dir/tp_core/test_runner.py $cur_dir/dist/test_runner.py
+
+
+# Author(s): Chris Johnson (chrisjohn404) Circa 2020

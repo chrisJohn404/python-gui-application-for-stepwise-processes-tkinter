@@ -1,11 +1,9 @@
-
 '''
-Test Application GUI
-
-Author: Chris Johnson
-Date: December 2019
-
-This is a basic GUI manager that executes defined tests.
+Test Application GUI (Implements "TestApplication")
+Author: Chris Johnson (chrisjohn404)
+Circa 2020
+ - Implements the "TestApplication" class which extends tkinter's "Frame" class
+   to implement the gui.
 '''
 
 from tkinter import *
@@ -19,41 +17,17 @@ import threading
 import time
 
 
-'''
-Define a class that manages the execution of a process in a
-unique thread.
-'''
-class testingThread(threading.Thread):
-    def __init__(self, threadID, name, testRunner, completeCB=None):
-        threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.name = name
-        self.testRunner = testRunner
-
-        if completeCB is None:
-            self.completeCB = self.defaultCompleteCB
-        else:
-            self.completeCB = completeCB
-
-    def defaultCompleteCB(self, passed):
-        return
-
-    def shutdown(self):
-        self.stopService = True
-
-    def run(self):
-        passed = self.testRunner.runTests()
-        if self.completeCB:
-            self.completeCB(passed)
-
 class TestApplication(Frame):
-    '''
-    Define initialization function.
-    @self: Required self argument.
-    @testRunner: Initialized [tests.py].testManager reference
-    @master: tkinter root reference.
-    '''
     def __init__(self, testRunner, master=None):
+        '''
+        Initialize test runner and pass callback functions.  Setup Tkinter GUI,
+        attach short-cut keys, and create GUI elements.
+
+        @self: Required self argument.
+        @testRunner: Initialized [tests.py].testManager reference
+        @master: tkinter root reference.
+        '''
+
         self.testRunner = testRunner
         self.testRunner.attachListeners(
           updateListener=self.updateListener,
@@ -78,25 +52,55 @@ class TestApplication(Frame):
 
         self.testStatusMessage = 'Not Running'
 
-    '''
-    Define function that enables the test status message box to be updated.
-    '''
-    def updateStatusMessage(self, msg=None):
-        if msg is None:
-            msg = self.testStatusMessage
+    # Callbacks & Methods, Interior Functions, Tk Widget Initialization.
+    # --------------------------------------------------------------------------
+    # ---------- Defining Callbacks and associated methods START ---------------
+    def updateListener(self, testStatusInfo, curTest):
+        '''
+        A callback method which updates the GUI when an incremental update needs
+        to occur.  Updates the GUI's text box and other indicators.
+        
+        @self: Required self argument.
+        @testStatusInfo: Object representing current state of test.
+        @curTest: Object representing current test being executed.
+        '''
+        self.textBox.delete('1.0',tk.END)
+        self.textBox.insert('1.0',self.testRunner.getCurStateText())
+        self.updateProgress()
+        
+    def finishedListener(self, testStatusInfo):
+        '''
+        A callback method which updates the GUI when a processie finishes
+        executing.  Updates the GUI's text box and other indicators.
 
-        self.testStatusMessage = msg
-        self.overallTestStatus['state']='normal'
-        self.overallTestStatus.delete("0","end")
-        self.overallTestStatus.insert(0, msg)
-        self.overallTestStatus['state']='readonly'
+        @self: Required self argument.
+        @testStatusInfo: Object representing current state of test.
+        '''
+        self.textBox.delete('1.0',tk.END)
+        self.textBox.insert('1.0',self.testRunner.getCurStateText())
+        self.updateProgress()
 
-    '''
-    Define a function that gets called to update:
-     - The "Progress" bar
-     - The "Overall Status" message box
-    '''
+    def showMessageBox(self, title, message, cb):
+        '''
+        A callback method that displays a pop-up message to the executor with an
+        "OK" button; delays the process step until pressed.
+        
+        @self: Required self argument.
+        @title: Title of message window.
+        @message: Message to be displayed.
+        @cb: Method called to resume step execution.
+        '''
+
+        messagebox.showinfo(title, message)
+        cb(self.testRunner)
+    # ------------------- Callbacks END, Called Methods START ------------------
     def updateProgress(self):
+        '''
+        Function which updates the "Progress" bar and executes method to update
+        "Overall Status" text box.
+
+        @self: Required self argument.
+        '''
         numTests = self.testRunner.getNumTests()
         numCompleteTests = self.testRunner.getNumCompleteTests()
         percentComplete = (numCompleteTests/numTests)*100
@@ -106,41 +110,45 @@ class TestApplication(Frame):
         statusText += str(numCompleteTests) + '/' + str(numTests)
         self.updateStatusMessage(statusText)
 
-    '''
-    Define a function that gets called to update the GUI's text
-    box (the status of the stepwise process), and then update 
-    the other indicators.  An incremental update function...
-    '''
-    def updateListener(self, testStatusInfo, curTest):
-        self.textBox.delete('1.0',tk.END)
-        self.textBox.insert('1.0',self.testRunner.getCurStateText())
-        self.updateProgress()
-    '''
-    Define a function that gets called to update the GUI's text
-    box (the status of the stepwise process), and then update 
-    the other indicators.  To be executed when a test step
-    is finished.
-    '''
-    def finishedListener(self, testStatusInfo):
-        self.textBox.delete('1.0',tk.END)
-        self.textBox.insert('1.0',self.testRunner.getCurStateText())
+    def updateStatusMessage(self, msg=None):
+        '''
+        Function that updates the text displayed in the "Overall Status" text
+        box.
+
+        @self: Required self argument.
+        @msg: A string to be displayed in the status message box.
+        '''
+        if msg is None:
+            msg = self.testStatusMessage
+
+        self.testStatusMessage = msg
+        self.overallTestStatus['state']='normal'
+        self.overallTestStatus.delete("0","end")
+        self.overallTestStatus.insert(0, msg)
+        self.overallTestStatus['state']='readonly'
+    # ---------- Defining Callbacks and associated methods END -----------------
+    # --------------------------------------------------------------------------
+
+    def startTest(self):
+        '''
+        Function that starts running defined steps (test class extensions).
+
+        @self: Required self argument.
+        '''
+        self.testRunner.initTests()
         self.updateProgress()
 
-    '''
-    Define a function that lets a test display a message box to 
-    the user.
-    '''
-    def showMessageBox(self, title, message, cb):
-        messagebox.showinfo(title, message)
-        cb(self.testRunner)
-
-    '''
-    Define a function that gets executed whe a test is completed
-    which prints slightly different information than the 
-    "updateListener" and "finishedListener" functions.  To be 
-    executed when all steps complete.
-    '''
+        self.testThread = testingThread(3, "GUI_TEST_THREAD", self.testRunner, self.testComplete)
+        self.testThread.start()
+    
     def testComplete(self, passed):
+        '''
+        A callback method executed upon process iteration completion.  Displays
+        tailored information to completion.
+
+        @self: Required self argument.
+        @passed: Boolean indicating process overall result.
+        '''
         self.updateProgress()
         numTestExecutions = self.testRunner.numIterations
         numSuccTestExecs = self.testRunner.numSuccessfulIterations
@@ -148,25 +156,23 @@ class TestApplication(Frame):
         msg += ' Completed Tests'
         self.updateStatusMessage(msg)
 
-    '''
-    Define a function that starts running the tests.
-    '''
-    def startTest(self):
-        self.testRunner.initTests()
-        self.updateProgress()
-
-        self.testThread = testingThread(3, "GUI_TEST_THREAD", self.testRunner, self.testComplete)
-        self.testThread.start()
-    '''
-    Define a function that quits tkinter.
-    '''
     def quit(self):
+        '''
+        Define a function that quits tkinter.
+
+        @self: Required self argument.
+        '''
         sys.exit()
     
-    '''
-    Define a function that sets up the top portion of the test application.
-    ''' 
+    # --------------------------------------------------------------------------
+    # ------------------ Tk Widget Initialization START ------------------------
     def createHeader(self):
+        '''
+        Function that sets up the upper portion of the test application 
+        (above "messagebox").
+
+        @self: Required self argument.
+        ''' 
         self.header = Frame(self)
         self.header.pack({'fill':'both', 'expand':'true'})
 
@@ -207,10 +213,13 @@ class TestApplication(Frame):
         self.statusTextLabel['text'] = 'Overall Status:'
         self.statusTextLabel.pack({'padx':10,'side':'right'})
 
-    '''
-    Define a function that sets up the window's text-box and run/quit buttons.
-    '''
     def createWidgets(self):
+        '''
+        Function that instansiates the lower portion of the application text-
+        box ("messagebox") and below.
+
+        @self: Required self argument.
+        ''' 
         self.textBox = tkst.ScrolledText(
             master = self,
             wrap= WORD,
@@ -242,6 +251,32 @@ class TestApplication(Frame):
         self.QUIT.pack({"side": "right",'padx':10})
 
 '''
+Class that manages the threaded execution of a process.
+'''
+class testingThread(threading.Thread):
+    def __init__(self, threadID, name, testRunner, completeCB=None):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.testRunner = testRunner
+
+        if completeCB is None:
+            self.completeCB = self.defaultCompleteCB
+        else:
+            self.completeCB = completeCB
+
+    def defaultCompleteCB(self, passed):
+        return
+
+    def shutdown(self):
+        self.stopService = True
+
+    def run(self):
+        passed = self.testRunner.runTests()
+        if self.completeCB:
+            self.completeCB(passed)
+
+'''
 Define a function to be called externally that executes the application.
 '''
 def TestApplicationInit(testRunner):
@@ -256,4 +291,4 @@ def TestApplicationInit(testRunner):
 
 
 
-
+''' Author(s): Chris Johnson (chrisjohn404) '''

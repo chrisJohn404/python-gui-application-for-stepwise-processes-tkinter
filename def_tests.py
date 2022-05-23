@@ -1,16 +1,19 @@
 '''
-Default Tests
-Author(s): Chris Johnson
-September 2019
-
-
+Default Process Steps (v1.0.0)
+Author(s): Chris Johnson (chrisjohn404)
+Circa 2020
+ - File defines a series of classes (steps), extending the "test" class
+   ref "[app-root]/tp_core/test.py" and then links them together by
+   extending the "testRunner" class which is also where application properties
+   are configured.
 '''
+
 import threading
 import time
 from string import Template
 
-from tp_core.test import test
-from tp_core.test_runner import testRunner
+from tp_core.test import Test
+from tp_core.test_runner import TestRunner
 
 DEBUG_ENABLED = False
 
@@ -18,7 +21,7 @@ DEBUG_ENABLED = False
 '''
 This is a step that will always pass illustrating returning messages to the user.
 '''
-class stepA(test):
+class stepA(Test):
     def test(self, testRunner):
         if DEBUG_ENABLED:
             print('Starting Test', self.name, self.haltIfErr)
@@ -28,12 +31,7 @@ class stepA(test):
 
             testRunner.global_variable = 0
 
-            msgTemplate = Template('''Step A Message: ${first_arg} ${second_arg}.''')
-
-            self.message = msgTemplate.substitute({
-                'first_arg': hi[0],
-                'second_arg': hi[2]
-            })
+            self.message = f'Step A Message: {hi[0]} {hi[2]}'
             self.isComplete = True
         except:
             self.message = 'Step A Failure Message.'
@@ -42,14 +40,14 @@ class stepA(test):
 
     def __init__(self, name, haltIfErr = False):
         self.haltIfErr = True
-        test.__init__(self, name, haltIfErr)
+        Test.__init__(self, name, haltIfErr)
 
 '''
 This is a second step that will always pass.  The conditional test flag can be
 be changed and the program will continue to run.  Note: this flag defaults to
 true, a definable variable in the 'testManager' class at the bottom of the file.
 '''
-class stepB(test):
+class stepB(Test):
     def test(self, testRunner):
         if DEBUG_ENABLED:
             print('Starting Test', self.name, self.haltIfErr)
@@ -64,13 +62,13 @@ class stepB(test):
 
     def __init__(self, name, haltIfErr = False):
         self.haltIfError = False
-        test.__init__(self, name, haltIfErr)
+        Test.__init__(self, name, haltIfErr)
 
 '''
 This test demonstrates how to perform a long-running task
 and provide incremental user feedback.
 '''
-class stepC(test):
+class stepC(Test):
     def test(self, testRunner):
         for i in range(10):
             time.sleep(0.1)
@@ -80,14 +78,14 @@ class stepC(test):
         self.isComplete = True
 
     def __init__(self, name, haltIfErr = False):
-        test.__init__(self, name, haltIfErr)
+        Test.__init__(self, name, haltIfErr)
 
 '''
 This test demonstrates how to prompt a tester to do something
 during a test and providing an "Ok" button that has to be 
 pressed before the application can continue.
 '''
-class stepD(test):
+class stepD(Test):
     def test(self, testRunner):
         self.update(1, 'Notifying test-runner to do something.')
         testRunner.displayMessage('Title... (My Title)', 'Message... (My Message).', self.stepTwo)
@@ -98,29 +96,26 @@ class stepD(test):
         self.isComplete = True
 
     def __init__(self, name, haltIfErr = False):
-        test.__init__(self, name, haltIfErr)
+        Test.__init__(self, name, haltIfErr)
 
 '''
 This test demonstrates how to prompt a tester to do something
 during a test and providing an "Ok" button that has to be 
 pressed before the application can continue.
 '''
-class stepE(test):
+class stepE(Test):
     def test(self, testRunner):
         self.message = f"Step E Message: {testRunner.global_variable}"
         self.isComplete = True
 
     def __init__(self, name, haltIfErr = False):
-        test.__init__(self, name, haltIfErr)
+        Test.__init__(self, name, haltIfErr)
 
 
 # Test Manager implements overall test set-up & teardown
 # routines and contains a list of all of the tests.  It 
 # extends the test-runner class
-class testManager(testRunner):
-    def testingSetUp(self):
-        # No specific set-up is required.
-        return
+class testManager(TestRunner):
 
     def getTestInfo(self):
         return {
@@ -137,12 +132,22 @@ class testManager(testRunner):
         tpString = '------------------------------------------------------------\n'
         tpString += '${name}: v${version}'
         return tpString
-
-    # There is a function: runTests that runs the tests
+    
+    def testingSetUp(self):
+        '''
+        No specific set-up is required
+        @self: Required self function.
+        '''
+        return
+    
     def testingTeardown(self):
-        # No specific tear-down is required.
+        '''
+        No specific tear-down is required.
+        @self: Required self function.
+        '''
         return
 
+    # NOTE Function [tp_core/test_runner.py:'runTests'] gets called to run tests.
     def __init__(self):
 
         tests = [
@@ -153,7 +158,10 @@ class testManager(testRunner):
             stepE('Step E Title')
         ]
 
-        testRunner.global_variable = 0
+        TestRunner.global_variable = 0
 
-        testRunner.__init__(self, tests, updateListener=self.defUpdateListener, finishedListener=self.defFinishedListener)
+        TestRunner.__init__(self, tests, updateListener=self.defUpdateListener, finishedListener=self.defFinishedListener)
+
+
+''' Author(s): Chris Johnson (chrisjohn404) '''
 

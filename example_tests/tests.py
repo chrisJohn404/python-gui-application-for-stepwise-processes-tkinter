@@ -1,8 +1,13 @@
 '''
-Defined Tests
-Author(s): Chris Johnson
-September 2019
+Process Steps (Example #1, v1.0.0)
+Author(s): Chris Johnson (chrisjohn404)
+Circa 2020
+ - File defines a series of classes (steps), extending the "test" class
+   ref "[app-root]/tp_core/test.py" and then links them together by
+   extending the "testRunner" class which is also where application properties
+   are configured.
 '''
+
 import sys
 import os
 from os import path
@@ -12,23 +17,10 @@ import threading
 import time
 from string import Template
 
-from test import test
-from test_runner import testRunner
+from test import Test
+from test_runner import TestRunner
 
 DEBUG_ENABLED = False
-
-print(f'importer: {importlib.abc}')
-print(f'cwd: {os.getcwd()}')
-# print(f'Template: {__builtins__}') #LONG
-print(f'dir: {dir()}')
-print(f'loader: {__loader__}')
-print(f'package: {__package__}')
-print(f'name: {__name__}')
-# print(f'path: {__path__}')
-print(f'spec: {__spec__}')
-print(f'specN: {__spec__.loader}')
-print(f'cached: {__cached__}')
-print(f'file: {__file__}')
 
 # NOTE: Code to get the path to the importer file.
 print('')
@@ -42,11 +34,12 @@ if __name__ != '__main__':
             # print(frame.filename)
             print(f'Ts-Importer: {path.abspath(frame.filename)}')
             break
+print(f'file: {__file__}')
 
 '''
 This is a step that will always pass illustrating returning messages to the user.
 '''
-class stepA(test):
+class stepA(Test):
     def test(self, testRunner):
         if DEBUG_ENABLED:
             print('Starting Test', self.name, self.haltIfErr)
@@ -55,13 +48,7 @@ class stepA(test):
             hi = ["Hello", "python", "World"]
 
             testRunner.global_variable = 0
-
-            msgTemplate = Template('''Step A Message: ${first_arg} ${second_arg}.''')
-
-            self.message = msgTemplate.substitute({
-                'first_arg': hi[0],
-                'second_arg': hi[2]
-            })
+            self.message = f'Step A Message: {hi[0]} {hi[2]}'
             self.isComplete = True
         except:
             self.message = 'Step A Failure Message.'
@@ -70,7 +57,7 @@ class stepA(test):
 
     def __init__(self, name, haltIfErr = False):
         self.haltIfErr = True
-        test.__init__(self, name, haltIfErr)
+        Test.__init__(self, name, haltIfErr)
 
 
 '''
@@ -78,7 +65,7 @@ This is a second step that will always pass.  The conditional test flag can be
 be changed and the program will continue to run.  Note: this flag defaults to
 true, a definable variable in the 'testManager' class at the bottom of the file.
 '''
-class stepB(test):
+class stepB(Test):
     def test(self, testRunner):
         if DEBUG_ENABLED:
             print('Starting Test', self.name, self.haltIfErr)
@@ -93,13 +80,13 @@ class stepB(test):
 
     def __init__(self, name, haltIfErr = False):
         self.haltIfError = False
-        test.__init__(self, name, haltIfErr)
+        Test.__init__(self, name, haltIfErr)
 
 '''
 This test demonstrates how to perform a long-running task
 and provide incremental user feedback.
 '''
-class stepC(test):
+class stepC(Test):
     def test(self, testRunner):
         for i in range(10):
             time.sleep(0.1)
@@ -109,26 +96,26 @@ class stepC(test):
         self.isComplete = True
 
     def __init__(self, name, haltIfErr = False):
-        test.__init__(self, name, haltIfErr)
+        Test.__init__(self, name, haltIfErr)
 
 '''
 This test demonstrates how to prompt a tester to do something
 during a test and providing an "Ok" button that has to be 
 pressed before the application can continue.
 '''
-class stepD(test):
+class stepD(Test):
     def test(self, testRunner):
         self.message = f"Step E Message: {testRunner.global_variable}"
         self.isComplete = True
 
     def __init__(self, name, haltIfErr = False):
-        test.__init__(self, name, haltIfErr)
+        Test.__init__(self, name, haltIfErr)
 
 
 # Test Manager implements overall test set-up & teardown
 # routines and contains a list of all of the tests.  It 
 # extends the test-runner class
-class testManager(testRunner):
+class testManager(TestRunner):
     def testingSetUp(self):
         # No specific set-up is required.
         return
@@ -155,7 +142,7 @@ class testManager(testRunner):
         return
 
     def __init__(self):
-
+        # Define tests.
         tests = [
             stepA('Step A Title', haltIfErr=True),
             stepB('Step B Title'),
@@ -163,7 +150,12 @@ class testManager(testRunner):
             stepD('Step D Title')
         ]
 
-        testRunner.global_variable = 0
+        # Need to define a process scoped global?
+        TestRunner.global_variable = 0
 
-        testRunner.__init__(self, tests, updateListener=self.defUpdateListener, finishedListener=self.defFinishedListener)
+        # Init TestRunner.
+        TestRunner.__init__(self, tests, updateListener=self.defUpdateListener, finishedListener=self.defFinishedListener)
+
+
+''' Author(s): Chris Johnson (chrisjohn404) '''
 

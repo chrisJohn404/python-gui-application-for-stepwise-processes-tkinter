@@ -1,12 +1,20 @@
+'''
+Processie Executor (Implements "TestRunner")
+Author(s): Chris Johnson
+Circa 2020
+ - Any implementor should extend this class in their process list to customize
+   the resulting application.
+
+ - Implements the "TestRunner" Class that executes defined processies, manages 
+   each step's completion state/notification requests, and processes their
+   output.  It notifies the executor via registered callbacks.
+'''
 
 from string import Template
 import time
 
-'''
-The general procedure for testing the ESP32 is:
-1. Establish sign-of-life by reading
-2. 
-'''
+
+# Expand a string to fill a row.
 def expandString(name, length):
     txt = name
     strLen = len(name)
@@ -16,42 +24,68 @@ def expandString(name, length):
         txt += ' '
 
     return txt
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+class tstr:
+    # inc = (f'{bcolors.OKBLUE}INCOMPLETE{bcolors.ENDC}')
+    # fail = (f'{bcolors.FAIL}FAILED{bcolors.ENDC}')
+    # passed = (f'{bcolors.OKGREEN}PASSED{bcolors.ENDC}')
+    inc = (f'INCOMPLETE')
+    fail = (f'FAILED')
+    passed = (f'PASSED')
 
-class testRunner():
-    # Function that gets called after each test to update the
-    # test status object and notify listeners...
-    def testReporter(self, testDef, isErr=False, message =''):
-        testDef.isErr = isErr
-        testDef.message = message
-
-    # Default Update Listener function, should be attached to by
-    # a GUI interface to notify users that an incremental test
-    # update has been received.
-    def defUpdateListener(self, testStatusInfo, curTest):
-        print("DEFAULT FUNC: Received Test Update")
-
-    # Default "Test Finished" function, should be attached to by
-    # a GUI interface to notify users that a complete test step 
-    # has been accomplished.
-    def defFinishedListener(self, testStatusInfo):
-        print("DEFAULT FUNC: Test Finished")
-
-    # Default "Display Message" function.
-    def defDisplayMessage(self, title, message, cb):
-        print("DEFAULT FUNC: Displaying Message", title, message)
-        cb(self)
-
+class TestRunner():
+    # ------------ TestRunner Default Methods to be overridden START ----------------
     def getTestInfo(self):
+        '''
+        Default Class Function to be overridden defining default name object.
+        @self: Required self argument.
+        '''
         return {
             'name': 'Default Test Program',
             'version': '-1.-1.-1'
         }
+
     def getTestInfoFmatTxt(self):
+        '''
+        Default Class Function to be overridden defining default in-messagebox- header.
+        @self: Required self argument.
+        '''
         return '''------------------------------------------------------------
         Test Program Version: ${version}'''
+    
+    def testingSetUp(self):
+        '''
+        Function that gets executed before any tests are run
+        @self: Required self argument.
+        '''
+        print("Default Testing Set-up")
+
+    def testingTeardown(self):
+        '''
+        Function that gets executed after all tests have finished running
+        @self: Required self argument.
+        '''
+        print("Default Testing Tear-down")
+    # ------------ TestRunner Default Methods to be overridden END ------------------
+    # --------------------------------------------------------------------------
 
     def getCurStateText(self):
+        '''
+        Externally callable function that queries for test runner's current
+        state.
+        @self: Required self argument.
+        '''
         txt = ''
+        
 
         testInfo = self.getTestInfo()
         testFmatStr = Template(self.getTestInfoFmatTxt())
@@ -86,16 +120,16 @@ class testRunner():
                             {'percentComplete':test.percentComplete}
                         ), columnWidths[1])
                 else:
-                    txt += expandString('INCOMPLETE', columnWidths[1])
+                    txt += expandString(tstr.inc, columnWidths[1])
             else:
                 if test.isErr:
                     overallPassed = False
-                    txt += expandString('FAILED', columnWidths[1])
+                    txt += expandString(tstr.fail, columnWidths[1])
 
                     if test.haltIfErr:
                         incompleteFailed = True
                 else:
-                    txt += expandString('PASSED', columnWidths[1])
+                    txt += expandString(tstr.passed, columnWidths[1])
             txt += '| '
             txt += test.message
             txt += '\n'
@@ -116,20 +150,12 @@ class testRunner():
                 txt += 'Not Started.'
         return txt
 
-    def updateCB(self, test):
-        self.updateFunc(self.tests, test)
-
-    def getCurTimeDiffInSec(self):
-        curTime = time.time()
-        delta = curTime - self.startTime
-        return round(delta,3)
-
-    def getCompletedTimeDiffInSec(self):
-        # TODO: The self.finishedTime doesn't get populated correctly for report...
-        delta = self.finishedTime - self.startTime
-        return round(delta,3)
-
+    # --------------------------------------------------------------------------
+    # ------------ Class Functions to set-up and run tests START ---------------
     def initTests(self):
+        '''
+        @self: Required self argument.
+        '''
         # Clear previous test resunts
         for test in self.tests:
             test.clear()
@@ -137,9 +163,12 @@ class testRunner():
         self.startTime = 0
         self.finishedTime = 0
         self.isRunning = False
-        
-    # Function that kicks off all of the tests.
+    
     def runTests(self):
+        '''
+        Function that kicks off all of the tests.
+        @self: Required self argument.
+        '''
         self.initTests()
         self.isRunning = True
         self.startTime = time.time()
@@ -184,27 +213,101 @@ class testRunner():
         self.isRunning = False
         return passed
 
-    # Function that gets executed before any tests are run
-    def testingSetUp(self):
-        print("Default Testing Set-up")
+    def getCompletedTimeDiffInSec(self):
+        '''
+        @self: Required self argument.
+        '''
+        # TODO: The self.finishedTime doesn't get populated correctly for report...
+        delta = self.finishedTime - self.startTime
+        return round(delta,3)
+    def getCurTimeDiffInSec(self):
+        '''
+        @self: Required self argument.
+        '''
+        curTime = time.time()
+        delta = curTime - self.startTime
+        return round(delta,3)
+    # ------------ Class Functions to set-up and run tests START ---------------
+    # --------------------------------------------------------------------------
 
-    # Function that gets executed after all tests have finished
-    # running
-    def testingTeardown(self):
-        print("Default Testing Tear-down")
 
+    # --------------------------------------------------------------------------
+    # ------------------- Class Property Getters, START ------------------------
     def getTests(self):
+        '''
+        @self: Required self argument.
+        '''
         return self.tests
     def getNumTests(self):
+        '''
+        @self: Required self argument.
+        '''
         return len(self.tests)
     def getNumCompleteTests(self):
+        '''
+        @self: Required self argument.
+        '''
         numComplete = 0
         for test in self.tests:
             if test.isComplete:
                 numComplete += 1
         return numComplete
+    # ------------------- Class Property Getters, END --------------------------
+    # --------------------------------------------------------------------------
+    
+    def updateCB(self, test):
+        '''
+        @self: Required self argument.
+        @test: Referenced test class.
+        '''
+        self.updateFunc(self.tests, test)
 
+    def testReporter(self, testDef, isErr=False, message =''):
+        '''
+        Test Reporter UCF
+        @self: Required self argument.
+        @testDef: Object being populated.
+        '''
+        testDef.isErr = isErr
+        testDef.message = message
+
+    # --------------------------------------------------------------------------
+    # ------------------- Class Spec Callback Defaults, START ------------------
+    def defUpdateListener(self, testStatusInfo, curTest):
+        '''
+        Class spec default callback function overridden during instansiation to
+        pass incremental step/"test" updates.
+
+        @self: Required self argument.
+        '''
+        print("DEFAULT FUNC: Received Test Update")
+
+    def defFinishedListener(self, testStatusInfo):
+        '''
+        Class spec default callback function overridden during instansiation to
+        pass step/"test" complete updates.
+
+        @self: Required self argument.
+        '''
+        print("DEFAULT FUNC: Test Finished")
+
+    def defDisplayMessage(self, title, message, cb):
+        '''
+        Class spec default callback function overridden during instansiation to
+        update message..
+
+        @self: Required self argument.
+        '''
+        print("DEFAULT FUNC: Displaying Message", title, message)
+        cb(self)
+    
+    # ------------------- Class Spec Callback Defaults, END --------------------
+    
     def attachListeners(self, updateListener=None, finishedListener=None, displayMessage=None):
+        '''
+        Function to be externally called to update listeners prior to init.
+        @self: Required self argument.
+        '''
         if updateListener is None:
             self.updateFunc = self.defUpdateListener
         else:
@@ -219,9 +322,16 @@ class testRunner():
             self.displayMessage = self.defDisplayMessage
         else:
             self.displayMessage = displayMessage
-
+    # ------------------- Class Spec Callback Defaults, START ------------------
+    # --------------------------------------------------------------------------
 
     def __init__(self, tests, updateListener=None, finishedListener=None, displayMessage=None):
+        '''
+        Function that gets called after each test to update the test status
+        object and notify listeners...
+
+        @self: Required self argument.
+        '''
         self.tests = tests
 
         if updateListener is None:
@@ -252,3 +362,7 @@ class testRunner():
 
 # tester = testRunner()
 # tester.run()
+
+
+''' Author(s): Chris Johnson (chrisjohn404) Circa 2020'''
+
