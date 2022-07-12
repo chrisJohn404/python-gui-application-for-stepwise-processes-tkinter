@@ -111,7 +111,8 @@ class testManager(TestRunner):
     def getTestInfo(self):
         return {
             'name': f'Example User Defined Python Test Program: \"{path.basename(__file__)}\"',
-            'version': '1.0.0'
+            'version': '1.0.0',
+            'author': 'chrisjohn404'
         }
     
     def getTestingInstructions(self):

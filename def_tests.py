@@ -120,7 +120,8 @@ class testManager(TestRunner):
     def getTestInfo(self):
         return {
             'name': 'Example Python Test Program',
-            'version': '1.0.0'
+            'version': '1.0.0',
+            'author': 'chrisjohn404'
         }
     
     def getTestingInstructions(self):
