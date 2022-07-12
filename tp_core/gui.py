@@ -182,6 +182,10 @@ class TestApplication(Frame):
         self.appLabel['text'] = self.testRunner.getTestInfo()['name']
         self.appLabel.pack({'padx':10, 'pady':10, 'fill':'x', 'expand':'false', 'side':'left'})
 
+        self.licenseLabel = Label(self.header)
+        self.licenseLabel['text'] = 'License: GPLv2'
+        self.licenseLabel.pack({'padx':10, 'pady':10, 'fill':'x', 'expand':'false', 'side':'right'})
+
         self.versionLabel = Label(self.header)
         self.versionLabel['text'] = self.testRunner.getTestInfo()['version']
         self.versionLabel.pack({'padx':10, 'pady':10, 'fill':'x', 'expand':'false', 'side':'right'})
