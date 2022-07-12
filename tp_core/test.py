@@ -1,7 +1,8 @@
 '''
 Step  (Implements "Test")
-Author(s): Chris Johnson
-Circa 2020
+Author(s): Chris Johnson (chrisjohn404)
+September 2020
+License: GPLv2
  - Implements the "Test" class which any implementor should extend as a ~step~
    of their defined process.
 '''
@@ -66,5 +67,6 @@ class Test():
         self.duration = 0
 
 
-''' Author(s): Chris Johnson (chrisjohn404) Circa 2020'''
 
+
+''' Author(s): Chris Johnson (chrisjohn404) September 2020'''

@@ -1,7 +1,8 @@
 '''
 CLI GUI Test Runner (Implements "CliTestApplication")
 Author: Chris Johnson (chrisjohn404)
-Circa 2020
+September 2020
+License: GPLv2
  - Implements the "CliTestApplication" class which runs a set of defined tests
    and produces a CLI gui.
 '''
@@ -100,5 +101,4 @@ class CliTestApplication():
 
 
 
-''' Author(s): Chris Johnson (chrisjohn404) '''
-
+''' Author(s): Chris Johnson (chrisjohn404) September 2020'''

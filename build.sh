@@ -1,4 +1,8 @@
 
+# Build script for running PyInstaller
+# Author (s): Chris Johnson (chrisjohn404)
+# September 2020
+# License: GPLv2
 
 cur_dir=`pwd`
 cd ..
@@ -23,4 +27,4 @@ cp $cur_dir/tp_core/test.py $cur_dir/dist/test.py
 cp $cur_dir/tp_core/test_runner.py $cur_dir/dist/test_runner.py
 
 
-# Author(s): Chris Johnson (chrisjohn404) Circa 2020
+# Author(s): Chris Johnson (chrisjohn404) September 2020

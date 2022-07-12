@@ -1,7 +1,8 @@
 '''
 Processie Executor (Implements "TestRunner")
-Author(s): Chris Johnson
-Circa 2020
+Author(s): Chris Johnson (chrisjohn404)
+September 2020
+License: GPLv2
  - Any implementor should extend this class in their process list to customize
    the resulting application.
 
@@ -13,7 +14,6 @@ Circa 2020
 from string import Template
 import time
 
-
 # Expand a string to fill a row.
 def expandString(name, length):
     txt = name
@@ -24,16 +24,7 @@ def expandString(name, length):
         txt += ' '
 
     return txt
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+
 class tstr:
     # inc = (f'{bcolors.OKBLUE}INCOMPLETE{bcolors.ENDC}')
     # fail = (f'{bcolors.FAIL}FAILED{bcolors.ENDC}')
@@ -360,9 +351,8 @@ class TestRunner():
     def destroy(self):
         print("Shutting Down Test Runner")
 
-# tester = testRunner()
-# tester.run()
 
 
-''' Author(s): Chris Johnson (chrisjohn404) Circa 2020'''
 
+
+''' Author(s): Chris Johnson (chrisjohn404) September 2020'''

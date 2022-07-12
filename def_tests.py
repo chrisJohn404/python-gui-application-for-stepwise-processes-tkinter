@@ -1,7 +1,8 @@
 '''
 Default Process Steps (v1.0.0)
 Author(s): Chris Johnson (chrisjohn404)
-Circa 2020
+September 2020
+License: GPLv2
  - File defines a series of classes (steps), extending the "test" class
    ref "[app-root]/tp_core/test.py" and then links them together by
    extending the "testRunner" class which is also where application properties
@@ -17,7 +18,6 @@ from tp_core.test_runner import TestRunner
 
 DEBUG_ENABLED = False
 
-
 '''
 This is a step that will always pass illustrating returning messages to the user.
 '''
@@ -27,11 +27,11 @@ class stepA(Test):
             print('Starting Test', self.name, self.haltIfErr)
 
         try:
-            hi = ["Hello", "python", "World"]
+            li = ["Hello", "python", "World"]
 
             testRunner.global_variable = 0
 
-            self.message = f'Step A Message: {hi[0]} {hi[2]}'
+            self.message = f'Step A Message: {li[0]} {li[2]}.'
             self.isComplete = True
         except:
             self.message = 'Step A Failure Message.'
@@ -56,7 +56,7 @@ class stepB(Test):
             self.message = "Step B failure message."
             self.isErr = True
         else:
-            self.message = "Step B succeeded."
+            self.message = "Step B Message."
 
         self.isComplete = True
 
@@ -74,7 +74,7 @@ class stepC(Test):
             time.sleep(0.1)
             self.update(i/10*100, "Working... "+str(i/10))
 
-        self.message = "Step C is complete."
+        self.message = "Step C Message."
         self.isComplete = True
 
     def __init__(self, name, haltIfErr = False):
@@ -87,12 +87,12 @@ pressed before the application can continue.
 '''
 class stepD(Test):
     def test(self, testRunner):
-        self.update(1, 'Notifying test-runner to do something.')
-        testRunner.displayMessage('Title... (My Title)', 'Message... (My Message).', self.stepTwo)
+        self.update(1, 'Waiting for test-runner to do something.')
+        testRunner.displayMessage('(My Title)', '(My Incremental Message).', self.stepTwo)
 
     def stepTwo(self, testRunner):
         time.sleep(0.5)
-        self.message = "Step D Message"
+        self.message = "Step D Message."
         self.isComplete = True
 
     def __init__(self, name, haltIfErr = False):
@@ -105,7 +105,7 @@ pressed before the application can continue.
 '''
 class stepE(Test):
     def test(self, testRunner):
-        self.message = f"Step E Message: {testRunner.global_variable}"
+        self.message = f"Step E Message: {testRunner.global_variable}."
         self.isComplete = True
 
     def __init__(self, name, haltIfErr = False):
@@ -149,7 +149,7 @@ class testManager(TestRunner):
 
     # NOTE Function [tp_core/test_runner.py:'runTests'] gets called to run tests.
     def __init__(self):
-
+        # Define tests.
         tests = [
             stepA('Step A Title', haltIfErr=True),
             stepB('Step B Title'),
@@ -163,5 +163,7 @@ class testManager(TestRunner):
         TestRunner.__init__(self, tests, updateListener=self.defUpdateListener, finishedListener=self.defFinishedListener)
 
 
-''' Author(s): Chris Johnson (chrisjohn404) '''
 
+
+
+''' Author(s): Chris Johnson (chrisjohn404) '''

@@ -1,10 +1,12 @@
 '''
 Test Application GUI (Implements "TestApplication")
 Author: Chris Johnson (chrisjohn404)
-Circa 2020
+September 2020
+License: GPLv2
  - Implements the "TestApplication" class which extends tkinter's "Frame" class
    to implement the gui.
 '''
+
 
 from tkinter import *
 import tkinter as tk
@@ -240,7 +242,7 @@ class TestApplication(Frame):
         )
 
         self.runButton = tk.Button(self,width=20, height=2)
-        self.runButton["text"] = "Run <F2>",
+        self.runButton["text"] = "Run <F2>"
         self.runButton["command"] = self.startTest
         self.runButton.pack({"side": "left",'padx':10,'pady':10})
 
@@ -291,4 +293,4 @@ def TestApplicationInit(testRunner):
 
 
 
-''' Author(s): Chris Johnson (chrisjohn404) '''
+''' Author(s): Chris Johnson (chrisjohn404) September 2020'''

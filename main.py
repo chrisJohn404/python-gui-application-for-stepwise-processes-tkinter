@@ -1,7 +1,8 @@
 '''
 Python GUI Application for Stepwise Processies, as vanilla python as possible.
 Author: Chris Johnson (chrisjohn404)
-Circa 2020
+September 2020
+License: GPLv2
  - Starting point for running application.  Handles CLI options and logic
    necessary for running as an application vs python script.xample application
    for running stepwise processies, pure python.
@@ -16,6 +17,8 @@ import importlib
 import importlib.util
 import argparse
 import traceback
+import atexit
+import argparse
 
 # Import shared library files.
 import tp_core.gui
@@ -27,9 +30,22 @@ isExecAsPyProc = True
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     isExecAsPyProc = False
 
+# Define default exit handler
+c_exit_handler = None
+def def_exit_handler():
+    if c_exit_handler:
+        c_exit_handler()
+    return
+atexit.register(def_exit_handler)
+
+# Define a function that gets called to enable processie sets
+# to run code on exit.
+def registerExitHandler(exitHandler):
+    c_exit_handler = exitHandler
 
 # Define Application Runner
-def runApp(isGui, process=''):
+def runApp(isGui, numExec, process=''):
+    print('in runApp', isGui, numExec, process)
     '''
     Function that runs application.
 
@@ -90,30 +106,59 @@ def importfile(file_path, class_name):
     m = spec.loader.exec_module(module)
     return module
 
-def printHelp():
-    print('''Stepwise Processies Application (Help Menu)
-    Usage: main.py [-h] [-c] process_path
+example_text='''
+Example:
+`python3 main.py ./example_tests/tests.py`
+`python3 main.py -r ./example_tests/tests.py`
 
-    Pass a file containing tests.
+Run in CLI mode:
+`python3 main.py -c -r ./example_tests/tests.py`
+'''
 
-    Options:
-    -c, --cli         Run in CLI mode.
-    -r, --run-file    Run a specified "[user_]tests.py" file.
-          Ex: [app] -r ./user_tests/curl_tests.py
-
-    -h, --help        Print help menu.
-
-    Example:
-    `python3 main.py ./example_tests/tests.py`
-    ''')
 # If this is the main application, then run...
 if __name__ == "__main__":
-    try:
-        execApp = True
-        execGui = True
-        # localTestLibs = False # Conditionally allow user script to import files, was exposed w/ "-l"
-        processies = []
+    def printHelp():
+        print('Stepwise Processies Application (Help Menu)')
+        parser.print_help()
+        print(example_text)
 
+    execApp = True
+    execGui = True
+    numExec = -1
+
+    # Read system environment variables to alter default state.
+    if os.environ.get('PGAFSPT_EXEC_GUI') is not None:
+        execGui = os.environ.get('PGAFSPT_NUM_EXEC')
+    if os.environ.get('PGAFSPT_EXEC_GUI') is not None:
+        execGui = os.environ.get('PGAFSPT_NUM_EXEC')
+    
+    # localTestLibs = False # Conditionally allow user script to import files, was exposed w/ "-l"
+    processies = []
+
+    parser = argparse.ArgumentParser(
+        description='Pass a file "path" that defines a set of stepwise processies.'
+    )
+    parser.version = '0.1.0'
+    parser.add_argument('processies', metavar='path', type=str, nargs='?', default='', help='Path of file to run.')
+    parser.add_argument('-c','--cli', action='store_false', help='Run in CLI mode.', dest='exec_gui')
+    parser.add_argument('-n','--num-executions', action='store', type=int, default=-1, metavar='N', help='Run processie [n] number of times.', dest='num_exec')
+    parser.add_argument('-r','--run-file', action='store', type=str, metavar='path', help='Run file path.', dest='run_file')
+
+    args = parser.parse_args()
+    # print(vars(args))
+    execGui = args.exec_gui
+    numExec = args.num_exec
+
+    if args.run_file:
+        processies.append(args.run_file)
+    else:
+        if isinstance(args.processies, list):
+            if len(args.processies) > 0:
+                processies.append(args.processies[0])
+        elif args.processies != '':
+            processies.append(args.processies)
+    try:
+        '''
         if len(sys.argv) > 1:
             ci=1
             if isExecAsPyProc:
@@ -122,23 +167,30 @@ if __name__ == "__main__":
                 arg=sys.argv[ci]
                 if arg == '-c' or arg == '--cli':
                     execGui = False; ci+=1; continue
+                if arg == '-n' or arg == '--num-executions':
+                    numExec = int(sys.argv[i+1]); ci+=2; continue
                 if arg == '-r' or arg == '--run-file':
                     processies = path.realpath(sys.argv[i+1]); ci+=2; continue
                 if arg == '-h' or arg == '--help':
                     execApp = False; ci+=1; continue
                 processies.append(arg)
                 ci+=1
+        '''
 
         if execApp and len(processies) > 0:
-            runApp(execGui, process=processies[0])
+            runApp(execGui, numExec, process=processies[0])
         elif execApp:
-            runApp(execGui)
+            runApp(execGui, numExec)
         else:
-            printHelp()
+            # printHelp()
+            parser.print_help()
     except Exception as err:
+        arg_str = ' '.join(sys.argv)
+        print(f'Encountered an error running: {sys.executable} {arg_str}')
         traceback.print_exc()
         print('---------------------------------------------------------------')
         printHelp()
+        # parser.print_help()
 
 
 

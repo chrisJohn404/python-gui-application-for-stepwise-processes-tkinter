@@ -1,5 +1,8 @@
 
 REM Build an application executable using pyinstaller
+REM Author(s): Chris Johnson (chrisjohn404)
+REM September 2020
+REM License: GPLv2
 
 SET cur_dir=%cd%
 cd ..
@@ -32,4 +35,4 @@ rem Run Test Program
 .\dist\%O_NAME%
 
 
-REM ''' Author(s): Chris Johnson (chrisjohn404) Circa 2020'''
+REM ''' Author(s): Chris Johnson (chrisjohn404) September 2020'''
