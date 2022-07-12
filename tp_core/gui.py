@@ -183,7 +183,7 @@ class TestApplication(Frame):
         self.appLabel.pack({'padx':10, 'pady':10, 'fill':'x', 'expand':'false', 'side':'left'})
 
         self.licenseLabel = Label(self.header)
-        self.licenseLabel['text'] = 'License: GPLv2'
+        self.licenseLabel['text'] = 'Author: chrisjohn404'
         self.licenseLabel.pack({'padx':10, 'pady':10, 'fill':'x', 'expand':'false', 'side':'right'})
 
         self.versionLabel = Label(self.header)
