@@ -17,10 +17,3 @@ A set of python scripts that can be used for making programs that need to perfor
 * Start Application specifying user-defined test script, use `-r or --run-file`: `python main.py -r ./example_tests/tests.py`
 * Start Application in CLI mode, use `-c or -cli`: `python main.py -c`
 
-# Building and Options
-The python scripts can be bundled into a stand-alone executable for either GUI or CLI execution.
-
-Install pyinstaller:
-python -m pip install pyinstaller
-
-
