@@ -13,11 +13,23 @@ License: GPLv2
 
 from string import Template
 import time
+import re
+from colors import bcolors
+
+strip_ANSI_escape_sequences_sub = re.compile(r"""
+    \033     # literal ESC
+    \[       # literal [
+    [;\d]*   # zero or more digits or semicolons
+    [A-Za-z] # a letter
+    """, re.VERBOSE).sub
+
+def stripAnsiEscapeSequences(s):
+    return strip_ANSI_escape_sequences_sub("", s)
 
 # Expand a string to fill a row.
 def expandString(name, length):
     txt = name
-    strLen = len(name)
+    strLen = len(stripAnsiEscapeSequences(name))
     numToAdd = length - strLen
 
     for i in range(numToAdd):
@@ -26,12 +38,12 @@ def expandString(name, length):
     return txt
 
 class tstr:
-    # inc = (f'{bcolors.OKBLUE}INCOMPLETE{bcolors.ENDC}')
-    # fail = (f'{bcolors.FAIL}FAILED{bcolors.ENDC}')
-    # passed = (f'{bcolors.OKGREEN}PASSED{bcolors.ENDC}')
-    inc = (f'INCOMPLETE')
-    fail = (f'FAILED')
-    passed = (f'PASSED')
+    inc = (f'{bcolors.OKBLUE}INCOMPLETE{bcolors.ENDC}')
+    fail = (f'{bcolors.FAIL}FAILED{bcolors.ENDC}')
+    passed = (f'{bcolors.OKGREEN}PASSED{bcolors.ENDC}')
+    # inc = (f'INCOMPLETE')
+    # fail = (f'FAILED')
+    # passed = (f'PASSED')
 
 class TestRunner():
     # ------------ TestRunner Default Methods to be overridden START ----------------
@@ -69,6 +81,14 @@ class TestRunner():
     # ------------ TestRunner Default Methods to be overridden END ------------------
     # --------------------------------------------------------------------------
 
+    def getStrippedCurStateText(self):
+        '''
+        Externally callable function that queries for test runner's current
+        state and strips color strings intended for CLI.
+        @self: Required self argument.
+        '''
+        return stripAnsiEscapeSequences(self.getCurStateText())
+    
     def getCurStateText(self):
         '''
         Externally callable function that queries for test runner's current
@@ -86,7 +106,7 @@ class TestRunner():
         txt += testFmatStr.substitute(testInfo)
         txt += '\n\n'
 
-        columns = ['name', 'status', 'message']
+        columns = ['Name', 'Status', 'Message']
         columnWidths = [30, 10, 80]
 
         txt += expandString(columns[0], columnWidths[0])

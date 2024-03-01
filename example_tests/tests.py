@@ -136,7 +136,8 @@ class testManager(TestRunner):
             stepA('Step A Title', haltIfErr=True),
             stepB('Step B Title'),
             stepC('Step C Title'),
-            stepD('Step D Title')
+            stepD('Step D Title'),
+            stepC('Step C.2 Title'),
         ]
 
         # Need to define a process scoped global?
