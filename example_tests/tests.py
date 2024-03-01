@@ -26,7 +26,7 @@ DEBUG_ENABLED = False
 '''
 This is a step that will always pass illustrating returning messages to the user.
 '''
-class stepA(Test):
+class StepA(Test):
     def test(self, testRunner):
         if DEBUG_ENABLED:
             print('Starting Test', self.name, self.haltIfErr)
@@ -53,7 +53,7 @@ This is a second step that will always pass.  The conditional test flag can be
 be changed and the program will continue to run.  Note: this flag defaults to
 true, a definable variable in the 'testManager' class at the bottom of the file.
 '''
-class stepB(Test):
+class StepB(Test):
     def test(self, testRunner):
         if DEBUG_ENABLED:
             print('Starting Test', self.name, self.haltIfErr)
@@ -74,7 +74,7 @@ class stepB(Test):
 This test demonstrates how to perform a long-running task
 and provide incremental user feedback.
 '''
-class stepC(Test):
+class StepC(Test):
     def test(self, testRunner):
         for i in range(10):
             time.sleep(0.1)
@@ -91,7 +91,7 @@ This test demonstrates how to prompt a tester to do something
 during a test and providing an "Ok" button that has to be 
 pressed before the application can continue.
 '''
-class stepD(Test):
+class StepD(Test):
     def test(self, testRunner):
         self.message = f"Step E Message: {testRunner.global_variable}."
         self.isComplete = True
@@ -103,7 +103,7 @@ class stepD(Test):
 # Test Manager implements overall test set-up & teardown
 # routines and contains a list of all of the tests.  It 
 # extends the test-runner class
-class testManager(TestRunner):
+class TestManager(TestRunner):
     def testingSetUp(self):
         # No specific set-up is required.
         return
@@ -133,11 +133,11 @@ class testManager(TestRunner):
     def __init__(self):
         # Define tests.
         tests = [
-            stepA('Step A Title', haltIfErr=True),
-            stepB('Step B Title'),
-            stepC('Step C Title'),
-            stepD('Step D Title'),
-            stepC('Step C.2 Title'),
+            StepA('Step A Title', haltIfErr=True),
+            StepB('Step B Title'),
+            StepC('Step C Title'),
+            StepD('Step D Title'),
+            StepC('Step C.2 Title'),
         ]
 
         # Need to define a process scoped global?

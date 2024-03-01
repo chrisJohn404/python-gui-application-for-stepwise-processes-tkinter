@@ -21,147 +21,147 @@ DEBUG_ENABLED = False
 '''
 This is a step that will always pass illustrating returning messages to the user.
 '''
-class stepA(Test):
-    def test(self, testRunner):
-        if DEBUG_ENABLED:
-            print('Starting Test', self.name, self.haltIfErr)
+class StepA(Test):
+	def test(self, testRunner):
+		if DEBUG_ENABLED:
+			print('Starting Test', self.name, self.haltIfErr)
 
-        try:
-            li = ["Hello", "python", "World"]
+		try:
+			li = ["Hello", "python", "World"]
 
-            testRunner.global_variable = 0
+			testRunner.global_variable = 0
 
-            self.message = f'Step A Message: {li[0]} {li[2]}.'
-            self.isComplete = True
-        except:
-            self.message = 'Step A Failure Message.'
-            self.isErr = True
-            self.isComplete = True
+			self.message = f'Step A Message: {li[0]} {li[2]}.'
+			self.isComplete = True
+		except:
+			self.message = 'Step A Failure Message.'
+			self.isErr = True
+			self.isComplete = True
 
-    def __init__(self, name, haltIfErr = False):
-        self.haltIfErr = True
-        Test.__init__(self, name, haltIfErr)
+	def __init__(self, name, haltIfErr = False):
+		self.haltIfErr = True
+		Test.__init__(self, name, haltIfErr)
 
 '''
 This is a second step that will always pass.  The conditional test flag can be
 be changed and the program will continue to run.  Note: this flag defaults to
 true, a definable variable in the 'testManager' class at the bottom of the file.
 '''
-class stepB(Test):
-    def test(self, testRunner):
-        if DEBUG_ENABLED:
-            print('Starting Test', self.name, self.haltIfErr)
+class StepB(Test):
+	def test(self, testRunner):
+		if DEBUG_ENABLED:
+			print('Starting Test', self.name, self.haltIfErr)
 
-        if False:
-            self.message = "Step B failure message."
-            self.isErr = True
-        else:
-            self.message = "Step B Message."
+		if False:
+			self.message = "Step B failure message."
+			self.isErr = True
+		else:
+			self.message = "Step B Message."
 
-        self.isComplete = True
+		self.isComplete = True
 
-    def __init__(self, name, haltIfErr = False):
-        self.haltIfError = False
-        Test.__init__(self, name, haltIfErr)
+	def __init__(self, name, haltIfErr = False):
+		self.haltIfError = False
+		Test.__init__(self, name, haltIfErr)
 
 '''
 This test demonstrates how to perform a long-running task
 and provide incremental user feedback.
 '''
-class stepC(Test):
-    def test(self, testRunner):
-        for i in range(10):
-            time.sleep(0.1)
-            self.update(i/10*100, "Working... "+str(i/10))
+class StepC(Test):
+	def test(self, testRunner):
+		for i in range(10):
+			time.sleep(0.1)
+			self.update(i/10*100, "Working... "+str(i/10))
 
-        self.message = "Step C Message."
-        self.isComplete = True
+		self.message = "Step C Message."
+		self.isComplete = True
 
-    def __init__(self, name, haltIfErr = False):
-        Test.__init__(self, name, haltIfErr)
-
-'''
-This test demonstrates how to prompt a tester to do something
-during a test and providing an "Ok" button that has to be 
-pressed before the application can continue.
-'''
-class stepD(Test):
-    def test(self, testRunner):
-        self.update(1, 'Waiting for test-runner to do something.')
-        testRunner.displayMessage('(My Title)', '(My Incremental Message).', self.stepTwo)
-
-    def stepTwo(self, testRunner):
-        time.sleep(0.5)
-        self.message = "Step D Message."
-        self.isComplete = True
-
-    def __init__(self, name, haltIfErr = False):
-        Test.__init__(self, name, haltIfErr)
+	def __init__(self, name, haltIfErr = False):
+		Test.__init__(self, name, haltIfErr)
 
 '''
 This test demonstrates how to prompt a tester to do something
 during a test and providing an "Ok" button that has to be 
 pressed before the application can continue.
 '''
-class stepE(Test):
-    def test(self, testRunner):
-        self.message = f"Step E Message: {testRunner.global_variable}."
-        self.isComplete = True
+class StepD(Test):
+	def test(self, testRunner):
+		self.update(1, 'Waiting for test-runner to do something.')
+		testRunner.displayMessage('(My Title)', '(My Incremental Message).', self.stepTwo)
 
-    def __init__(self, name, haltIfErr = False):
-        Test.__init__(self, name, haltIfErr)
+	def stepTwo(self, testRunner):
+		time.sleep(0.5)
+		self.message = "Step D Message."
+		self.isComplete = True
+
+	def __init__(self, name, haltIfErr = False):
+		Test.__init__(self, name, haltIfErr)
+
+'''
+This test demonstrates how to prompt a tester to do something
+during a test and providing an "Ok" button that has to be 
+pressed before the application can continue.
+'''
+class StepE(Test):
+	def test(self, testRunner):
+		self.message = f"Step E Message: {testRunner.global_variable}."
+		self.isComplete = True
+
+	def __init__(self, name, haltIfErr = False):
+		Test.__init__(self, name, haltIfErr)
 
 
 # Test Manager implements overall test set-up & teardown
 # routines and contains a list of all of the tests.  It 
 # extends the test-runner class
-class testManager(TestRunner):
+class TestManager(TestRunner):
 
-    def getTestInfo(self):
-        return {
-            'name': 'Example Python Test Program',
-            'version': '1.0.0',
-            'author': 'chrisjohn404'
-        }
-    
-    def getTestingInstructions(self):
-        return '''1. Do something before running the program.
-        2. Run program.
-        '''
+	def getTestInfo(self):
+		return {
+			'name': 'Example Python Test Program',
+			'version': '1.0.0',
+			'author': 'chrisjohn404'
+		}
+	
+	def getTestingInstructions(self):
+		return '''1. Do something before running the program.
+		2. Run program.
+		'''
 
-    def getTestInfoFmatTxt(self):
-        tpString = '------------------------------------------------------------\n'
-        tpString += '${name}: v${version}'
-        return tpString
-    
-    def testingSetUp(self):
-        '''
-        No specific set-up is required
-        @self: Required self function.
-        '''
-        return
-    
-    def testingTeardown(self):
-        '''
-        No specific tear-down is required.
-        @self: Required self function.
-        '''
-        return
+	def getTestInfoFmatTxt(self):
+		tpString = '------------------------------------------------------------\n'
+		tpString += '${name}: v${version}'
+		return tpString
+	
+	def testingSetUp(self):
+		'''
+		No specific set-up is required
+		@self: Required self function.
+		'''
+		return
+	
+	def testingTeardown(self):
+		'''
+		No specific tear-down is required.
+		@self: Required self function.
+		'''
+		return
 
-    # NOTE Function [tp_core/test_runner.py:'runTests'] gets called to run tests.
-    def __init__(self):
-        # Define tests.
-        tests = [
-            stepA('Step A Title', haltIfErr=True),
-            stepB('Step B Title'),
-            stepC('Step C Title'),
-            stepD('Step D Title'),
-            stepE('Step E Title')
-        ]
+	# NOTE Function [tp_core/test_runner.py:'runTests'] gets called to run tests.
+	def __init__(self):
+		# Define tests.
+		tests = [
+			StepA('Step A Title', haltIfErr=True),
+			StepB('Step B Title'),
+			StepC('Step C Title'),
+			StepD('Step D Title'),
+			StepE('Step E Title')
+		]
 
-        TestRunner.global_variable = 0
+		TestRunner.global_variable = 0
 
-        TestRunner.__init__(self, tests, updateListener=self.defUpdateListener, finishedListener=self.defFinishedListener)
+		TestRunner.__init__(self, tests, updateListener=self.defUpdateListener, finishedListener=self.defFinishedListener)
 
 
 

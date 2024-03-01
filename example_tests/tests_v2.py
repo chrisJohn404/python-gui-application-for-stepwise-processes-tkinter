@@ -26,7 +26,7 @@ DEBUG_ENABLED = False
 '''
 This is a step that will always pass illustrating returning messages to the user.
 '''
-class stepA(Test):
+class StepA(Test):
     def test(self, testRunner):
         if DEBUG_ENABLED:
             print('Starting Test', self.name, self.haltIfErr)
@@ -74,7 +74,7 @@ class stepB(Test):
 This test demonstrates how to perform a long-running task
 and provide incremental user feedback.
 '''
-class stepC(Test):
+class StepC(Test):
     def test(self, testRunner):
         for i in range(10):
             time.sleep(0.1)
@@ -91,7 +91,7 @@ This test demonstrates how to prompt a tester to do something
 during a test and providing an "Ok" button that has to be 
 pressed before the application can continue.
 '''
-class stepD(Test):
+class StepD(Test):
     def test(self, testRunner):
         self.update(1, 'Waiting for test-runner to do something.')
         testRunner.displayMessage('(My Title)', '(My Message).', self.stepTwo)
@@ -109,7 +109,7 @@ This test demonstrates how to prompt a tester to do something
 during a test and providing an "Ok" button that has to be 
 pressed before the application can continue.
 '''
-class stepE(Test):
+class StepE(Test):
     def test(self, testRunner):
         self.message = f"Step E Message: {testRunner.global_variable}."
         self.isComplete = True
@@ -121,7 +121,7 @@ class stepE(Test):
 # Test Manager implements overall test set-up & teardown
 # routines and contains a list of all of the tests.  It 
 # extends the test-runner class
-class testManager(TestRunner):
+class TestManager(TestRunner):
     def testingSetUp(self):
         # No specific set-up is required.
         return
@@ -151,11 +151,11 @@ class testManager(TestRunner):
     def __init__(self):
         # Define tests.
         tests = [
-            stepA('V2 Step A Title', haltIfErr=True),
-            stepB('V2 Step B Title'),
-            stepC('V2 Step C Title'),
-            stepD('V2 Step D Title'),
-            stepE('V2 Step E Title')
+            StepA('V2 Step A Title', haltIfErr=True),
+            StepB('V2 Step B Title'),
+            StepC('V2 Step C Title'),
+            StepD('V2 Step D Title'),
+            StepE('V2 Step E Title')
         ]
 
         # Need to define a process scoped global?
