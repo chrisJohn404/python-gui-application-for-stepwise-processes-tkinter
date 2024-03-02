@@ -1,14 +1,14 @@
 # Python GUI Application for Stepwise Processies - Tkinter
 A set of python scripts that can be used for making programs that need to perform stepwise processies.
 
-![Main Window](https://github.com/chrisjohn404/python-gui-application-for-stepwise-processes-tkinter/blob/master/docs/screen-capture.png?raw=true)
+![Main Window](./blob/master/docs/screen-capture.png?raw=true)
 
 # Features
 ## In-Situ User Feedback Required
-![Main Window](https://github.com/chrisjohn404/python-gui-application-for-stepwise-processes-tkinter/blob/master/docs/ui-messages.png?raw=true)
+![Main Window](./blob/master/docs/ui-messages.png?raw=true)
 
 ## Track Number of Executions
-![Main Window](https://github.com/chrisjohn404/python-gui-application-for-stepwise-processes-tkinter/blob/master/docs/test-complete.png?raw=true)
+![Main Window](./blob/master/docs/test-complete.png?raw=true)
 
 # Running
 * Start Application: `python main.py`
