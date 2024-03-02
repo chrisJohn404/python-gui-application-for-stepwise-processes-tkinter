@@ -88,9 +88,9 @@ pressed before the application can continue.
 class StepD(Test):
 	def test(self, testRunner):
 		self.update(1, 'Waiting for test-runner to do something.')
-		testRunner.displayMessage('(My Title)', '(My Incremental Message).', self.stepTwo)
+		testRunner.displayMessage('My Title', 'My Incremental Message.', self.stepTwo)
 
-	def stepTwo(self, testRunner):
+	def stepTwo(self, testRunner, result):
 		time.sleep(0.5)
 		self.message = "Step D Message."
 		self.isComplete = True
@@ -100,17 +100,61 @@ class StepD(Test):
 
 '''
 This test demonstrates how to prompt a tester to do something
-during a test and providing an "Ok" button that has to be 
+during a test and providing "OK" and "Cancel" buttons that has to be 
 pressed before the application can continue.
 '''
 class StepE(Test):
+	def msg_interpreter(self, user_input, gui_type):
+		time.sleep(0.5)
+		print('User Input:',user_input, gui_type)
+		return user_input
+	
 	def test(self, testRunner):
-		self.message = f"Step E Message: {testRunner.global_variable}."
-		self.isComplete = True
+		self.update(1, 'Waiting for test-runner to do something.')
+		testRunner.displayMessage('User Prompt', 'Please do...', self.stepTwo, interpreter=self.msg_interpreter, messagebox_method='askokcancel')
+
+	def stepTwo(self, testRunner, result):
+		time.sleep(0.5)
+		if result=='OK' or result=='' or result=='ok' or result==True:
+			self.message = "Step E Message."
+			self.isComplete = True
+		else:
+			self.message = "Step E Canceled." + str(result) + ':' + str(type(result))
+			self.isComplete = True
+			self.isErr = True
 
 	def __init__(self, name, haltIfErr = False):
 		Test.__init__(self, name, haltIfErr)
 
+'''
+This test demonstrates how to retry a test that has otherwise failed
+and allowing the test to continue during a failed state.
+
+Note: If retried 2x the test will pass.
+'''
+class StepF(Test):
+	def msg_interpreter(self, user_input, gui_type):
+		time.sleep(0.5)
+		print('User Input:',user_input, gui_type)
+		return user_input
+	
+	def test(self, testRunner):
+		time.sleep(0.5)
+		self.num_retries += 1
+		if self.num_retries < 3:
+			self.isErr = True
+			self.update(round(self.num_retries/3*100,2), 'The test has failed... try number:' + str(self.num_retries))
+			testRunner.displayMessage('Attempter...', 'Attempt: ' + str(self.num_retries) + ' has failed. Try again?', self.test, interpreter=self.msg_interpreter, messagebox_method='askretrycancel')
+		else:
+			self.isErr = False
+			self.update(90, 'The test is still passing...')
+			time.sleep(0.25)
+			self.message = "Step F passed after " + str(self.num_retries) + " attempts."
+			self.isComplete = True
+	
+	def __init__(self, name, haltIfErr = False):
+		Test.__init__(self, name, haltIfErr)
+		self.num_retries = 0
 
 # Test Manager implements overall test set-up & teardown
 # routines and contains a list of all of the tests.  It 
@@ -156,7 +200,8 @@ class TestManager(TestRunner):
 			StepB('Step B Title'),
 			StepC('Step C Title'),
 			StepD('Step D Title'),
-			StepE('Step E Title')
+			StepE('Step E Title'),
+			StepF('Step F Title')
 		]
 
 		TestRunner.global_variable = 0

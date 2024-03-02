@@ -5,10 +5,10 @@ A set of python scripts that can be used for making programs that need to perfor
 
 # Features
 ## In-Situ User Feedback Required
-![Main Window](https://github.com/chrisjohn404/python-gui-application-for-stepwise-processes-tkinter/blob/master/docs/ui-messages.jpg?raw=true)
+![Main Window](https://github.com/chrisjohn404/python-gui-application-for-stepwise-processes-tkinter/blob/master/docs/ui-messages.png?raw=true)
 
 ## Track Number of Executions
-![Main Window](https://github.com/chrisjohn404/python-gui-application-for-stepwise-processes-tkinter/blob/master/docs/test-complete.jpg?raw=true)
+![Main Window](https://github.com/chrisjohn404/python-gui-application-for-stepwise-processes-tkinter/blob/master/docs/test-complete.png?raw=true)
 
 # Running
 * Start Application: `python main.py`

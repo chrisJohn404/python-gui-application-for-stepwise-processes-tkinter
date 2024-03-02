@@ -148,15 +148,15 @@ class TestRunner():
         txt += '\nOverall Result: '
         if overallComplete:
             if overallPassed:
-                txt += 'PASSED. Duration: ' + str(self.getCompletedTimeDiffInSec()) + 's'
+                txt += tstr.passed + '. Duration: ' + str(self.getCompletedTimeDiffInSec()) + 's'
             else:
-                txt += 'FAILED. Duration: ' + str(self.getCompletedTimeDiffInSec()) + 's'
+                txt += tstr.fail + '. Duration: ' + str(self.getCompletedTimeDiffInSec()) + 's'
         else:
             if self.isRunning:
                 if incompleteFailed:
-                    txt += 'FAILED. Duration: ' + str(self.getCompletedTimeDiffInSec()) + 's'
+                    txt += tstr.fail + '. Duration: ' + str(self.getCompletedTimeDiffInSec()) + 's'
                 else:
-                    txt += 'INCOMPLETE. Duration: ' + str(self.getCurTimeDiffInSec()) + 's'
+                    txt += tstr.inc + '. Duration: ' + str(self.getCurTimeDiffInSec()) + 's'
             else:
                 txt += 'Not Started.'
         return txt
@@ -192,9 +192,9 @@ class TestRunner():
         for test in self.tests:
             try:
                 test.runTest(self, self.tests, self.updateCB)
-            except:
+            except Exception as err:
                 # If an un-caught software error occured, catch it & stop testing.
-                test.message = 'Uncaught software exception, test failed.'
+                test.message = 'Uncaught software exception, test failed. ' + str(err)
                 test.isErr = True
                 test.haltIfErr = True
 
@@ -302,10 +302,10 @@ class TestRunner():
         '''
         print("DEFAULT FUNC: Test Finished")
 
-    def defDisplayMessage(self, title, message, cb):
+    def defDisplayMessage(self, title, message, cb, cancelable=False):
         '''
         Class spec default callback function overridden during instansiation to
-        update message..
+        update message.
 
         @self: Required self argument.
         '''

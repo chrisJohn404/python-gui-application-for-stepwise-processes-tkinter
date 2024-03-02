@@ -179,19 +179,31 @@ class TestApplication(Frame):
 		self.updateAndFormatTextBox(self.testRunner.getCurStateText())
 		self.updateProgress()
 
-	def showMessageBox(self, title, message, cb):
+	def showMessageBox(self, title, message, cb, interpreter=None, messagebox_method='showinfo'):
 		'''
 		A callback method that displays a pop-up message to the executor with an
 		"OK" button; delays the process step until pressed.
+
+		Documentation for messagebox methods:
+		https://docs.python.org/3/library/tkinter.messagebox.html#messagebox-types
+		ex: `messagebox.showinfo(title, message)`
 		
 		@self: Required self argument.
 		@title: Title of message window.
 		@message: Message to be displayed.
 		@cb: Method called to resume step execution.
 		'''
+		method = getattr(messagebox, messagebox_method)
 
-		messagebox.showinfo(title, message)
-		cb(self.testRunner)
+		if interpreter:
+			result = interpreter(method(title, message), 'tkinter')
+		else:
+			result = method(title, message)
+		
+		try:
+			cb(self.testRunner, result)
+		except:
+			cb(self.testRunner)
 	# ------------------- Callbacks END, Called Methods START ------------------
 	def updateProgress(self):
 		'''
