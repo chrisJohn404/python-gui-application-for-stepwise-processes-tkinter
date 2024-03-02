@@ -28,6 +28,10 @@ https://gist.github.com/jrjhealey/1eac73a1d1aa411990ab7bfd4a1687d9
 https://wiki.tcl-lang.org/page/ANSI+color+control
 
 '''
+
+
+import re
+
 tclInterpretationCodes = {
 	"0": {"color": 'normal', "fg": False, "bg": False, "style": True},
 	"1": {"color": 'bold', "fg": False, "bg": False, "style": True},
@@ -71,6 +75,16 @@ tclInterpretationCodes = {
 	"107": {"color": 'white', "fg": False, "bg": True, "style": False},
 }
 
+
+
+strip_ANSI_escape_sequences_sub = re.compile(r"""
+	\033     # literal ESC
+	\[       # literal [
+	[;\d]*   # zero or more digits or semicolons
+	[A-Za-z] # a letter
+	""", re.VERBOSE).sub
+def stripAnsiEscapeSequences(s):
+	return strip_ANSI_escape_sequences_sub("", s)
 
 class Codes:
 	start = '\033['

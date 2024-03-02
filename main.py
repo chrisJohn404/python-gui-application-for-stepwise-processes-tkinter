@@ -22,6 +22,10 @@ import argparse
 from pathlib import Path
 
 # Import shared library files.
+
+# Enable imports among files in the tp_core path fixing issue in python 3.11
+sys.path.insert(0, path.join(Path(__file__).resolve().parent,'tp_core'))
+
 import tp_core.gui
 from tp_core.gui import TestApplicationInit
 from tp_core.cli_gui import CliTestApplication
@@ -54,9 +58,6 @@ def runApp(isGui, numExec, process=''):
 	@process: String path file to load.
 	'''
 	initializedTestManager = False
-
-	# Enable imports among files in the tp_core path fixing issue in python 3.11
-	sys.path.insert(0, path.join(Path(__file__).resolve().parent,'tp_core'))
 
 	if process=='':
 		# Import process

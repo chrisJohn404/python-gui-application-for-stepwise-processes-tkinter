@@ -18,60 +18,9 @@ import sys
 import threading
 import time, re
 
+from colors import tclInterpretationCodes
+from colors import stripAnsiEscapeSequences
 
-
-tclInterpretationCodes = {
-	"0": {"color": 'normal', "fg": False, "bg": False, "style": True},
-	"1": {"color": 'bold', "fg": False, "bg": False, "style": True},
-	"2": {"color": 'dull', "fg": False, "bg": False, "style": True},
-	"3": {"color": 'italic', "fg": False, "bg": False, "style": True},
-	"4": {"color": 'underline', "fg": False, "bg": False, "style": True},
-	"7": {"color": 'highlighted', "fg": False, "bg": False, "style": True},
-	"9": {"color": 'struck-out', "fg": False, "bg": False, "style": True},
-	"21": {"color": 'double-underline', "fg": False, "bg": False, "style": True},
-	"30": {"color": 'black', "fg": True, "bg": False, "style": False},
-	"31": {"color": 'red', "fg": True, "bg": False, "style": False},
-	"32": {"color": 'green', "fg": True, "bg": False, "style": False},
-	"33": {"color": 'yellow', "fg": True, "bg": False, "style": False},
-	"34": {"color": 'blue', "fg": True, "bg": False, "style": False},
-	"35": {"color": 'purple', "fg": True, "bg": False, "style": False},
-	"36": {"color": 'cyan', "fg": True, "bg": False, "style": False},
-	"37": {"color": 'white', "fg": True, "bg": False, "style": False},
-	"40": {"color": 'black', "fg": False, "bg": True, "style": False},
-	"41": {"color": 'red', "fg": False, "bg": True, "style": False},
-	"42": {"color": 'green', "fg": False, "bg": True, "style": False},
-	"43": {"color": 'yellow', "fg": False, "bg": True, "style": False},
-	"44": {"color": 'blue', "fg": False, "bg": True, "style": False},
-	"45": {"color": 'purple', "fg": False, "bg": True, "style": False},
-	"46": {"color": 'cyan', "fg": False, "bg": True, "style": False},
-	"47": {"color": 'white', "fg": False, "bg": True, "style": False},
-	"90": {"color": 'black', "fg": True, "bg": False, "style": False},
-	"91": {"color": 'red', "fg": True, "bg": False, "style": False},
-	"92": {"color": 'green', "fg": True, "bg": False, "style": False},
-	"93": {"color": 'yellow', "fg": True, "bg": False, "style": False},
-	"94": {"color": 'blue', "fg": True, "bg": False, "style": False},
-	"95": {"color": 'purple', "fg": True, "bg": False, "style": False},
-	"96": {"color": 'cyan', "fg": True, "bg": False, "style": False},
-	"97": {"color": 'white', "fg": True, "bg": False, "style": False},
-	"100": {"color": 'black', "fg": False, "bg": True, "style": False},
-	"101": {"color": 'red', "fg": False, "bg": True, "style": False},
-	"102": {"color": 'green', "fg": False, "bg": True, "style": False},
-	"103": {"color": 'yellow', "fg": False, "bg": True, "style": False},
-	"104": {"color": 'blue', "fg": False, "bg": True, "style": False},
-	"105": {"color": 'purple', "fg": False, "bg": True, "style": False},
-	"106": {"color": 'cyan', "fg": False, "bg": True, "style": False},
-	"107": {"color": 'white', "fg": False, "bg": True, "style": False},
-}
-
-
-strip_ANSI_escape_sequences_sub = re.compile(r"""
-	\033     # literal ESC
-	\[       # literal [
-	[;\d]*   # zero or more digits or semicolons
-	[A-Za-z] # a letter
-	""", re.VERBOSE).sub
-def stripAnsiEscapeSequences(s):
-	return strip_ANSI_escape_sequences_sub("", s)
 
 
 class TestApplication(Frame):
