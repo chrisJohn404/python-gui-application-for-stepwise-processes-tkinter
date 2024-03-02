@@ -5,17 +5,18 @@ A set of python scripts that can be used for making programs that need to perfor
 
 # Features
 ## In-Situ User Feedback Required
-![Main Window](./docs/ui-messages.png?raw=true)
+![User Messages](./docs/ui-messages.png?raw=true)
 
 ## Track Number of Executions
-![Main Window](./docs/test-complete.png?raw=true)
+![Support for Pass/Fail (Green/Red) colors](./docs/test-complete.png?raw=true)
 
 # Running
 * Start Application: `python main.py`
 
 # Options
-* Start Application specifying user-defined test script, use `-r or --run-file`: `python main.py -r ./example_tests/tests.py`
+* Start Application specifying user-defined test script, use `-r or --run-file`:`python main.py -r ./example_tests/tests.py`
 * Start Application in CLI mode, use `-c or -cli`: `python main.py -c`
+![Command Line Interface Mode](./docs/cli-mode.png?raw=true)
 
 # Found this useful?
 Buy an Aptera. They are accepting pre-orders right now and this referal code gives you a $30 discount.  I'm supposed to get a $1,000 credit.  Afterwhich you should get a referral link and can start doing the same.
