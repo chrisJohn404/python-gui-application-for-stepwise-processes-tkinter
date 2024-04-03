@@ -1,5 +1,5 @@
-# Python GUI Application for Stepwise Processies - Tkinter
-A set of python scripts that can be used for making programs that need to perform stepwise processies.
+# Python GUI Application for Stepwise Processes - Tkinter
+A set of python scripts that can be used for making programs that need to perform stepwise processes.
 
 ![Main Window](./docs/screen-capture.png?raw=true)
 
